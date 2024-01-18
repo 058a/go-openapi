@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  openapi-golang:
+    container_name: openapi-golang
+    image: golang:1.21.6-alpine3.19
+    tty: true
+    working_dir: /usr/src/app
+    # airをinstallして起動する
+    command: sh -c "go install github.com/cosmtrek/air@latest && air"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./app:/usr/src/app
