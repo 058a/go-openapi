@@ -4,29 +4,24 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/volatiletech/sqlboiler/v4/boil"
-
 	domain "openapi/domain/models"
 	repository "openapi/repository/models"
+
+	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
 type StockItem struct{}
 
 func (s *StockItem) Insert(db *sql.DB, stockItem domain.StockItem) error {
 
-	// dbPingErr := db.Ping()
-	// if dbPingErr != nil {
-	// 	return dbPingErr
-	// }
-
-	StockItem := repository.StockItem{
+	stockItemRecord := repository.StockItem{
 		ID:   stockItem.Id.String(),
 		Name: stockItem.Name,
 	}
 
-	execErr := StockItem.Insert(context.Background(), db, boil.Infer())
-	if execErr != nil {
-		return execErr
+	dbExecErr := stockItemRecord.Insert(context.Background(), db, boil.Infer())
+	if dbExecErr != nil {
+		return dbExecErr
 	}
 
 	return nil
