@@ -18,17 +18,17 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
+	dbDriver := "postgres"
+	dsn := "host=openapi-db port=5432 user=user password=password dbname=openapi sslmode=disable"
+
+	db, openErr := sql.Open(dbDriver, dsn)
+	if openErr != nil {
+		e.Logger.Fatal(openErr)
+	}
+	defer db.Close()
+
 	e.GET("/", hello.GetHello)
 	e.POST("/stock/items", func(ctx echo.Context) error {
-		dbDriver := "postgres"
-		dsn := "host=openapi-db port=5432 user=user password=password dbname=openapi sslmode=disable"
-
-		db, openErr := sql.Open(dbDriver, dsn)
-		if openErr != nil {
-			e.Logger.Fatal(openErr)
-		}
-		defer db.Close()
-
 		return stock_item.PostStockItem(ctx, db)
 	})
 	e.Logger.Fatal(e.Start(":3000"))
