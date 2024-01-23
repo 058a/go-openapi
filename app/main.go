@@ -31,5 +31,9 @@ func main() {
 	e.POST("/stock/items", func(ctx echo.Context) error {
 		return stock_item.PostStockItem(ctx, db)
 	})
+	e.PUT("/stock/items/:id", func(ctx echo.Context) error {
+		return stock_item.PutStockItem(ctx, db)
+	})
+
 	e.Logger.Fatal(e.Start(":3000"))
 }

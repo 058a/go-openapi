@@ -4,7 +4,12 @@
 package stock_item
 
 import (
+	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/labstack/echo/v4"
+	"github.com/oapi-codegen/runtime"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
@@ -13,30 +18,47 @@ type BadRequestResponse = []struct {
 	Message *string `json:"message,omitempty"`
 }
 
-// CreatedResponse defines model for CreatedResponse.
-type CreatedResponse struct {
-	Id openapi_types.UUID `json:"id"`
+// StockItem defines model for StockItem.
+type StockItem struct {
+	CreatedAt time.Time          `json:"createdAt"`
+	Id        openapi_types.UUID `json:"id"`
+	Name      string             `json:"name"`
+	UpdatedAt time.Time          `json:"updatedAt"`
 }
 
 // BadRequest defines model for BadRequest.
 type BadRequest = BadRequestResponse
 
 // Created defines model for Created.
-type Created = CreatedResponse
+type Created = StockItem
+
+// OK defines model for OK.
+type OK = StockItem
 
 // PostStockItemJSONBody defines parameters for PostStockItem.
 type PostStockItemJSONBody struct {
 	Name string `json:"name"`
 }
 
+// PutStockItemJSONBody defines parameters for PutStockItem.
+type PutStockItemJSONBody struct {
+	Name string `json:"name"`
+}
+
 // PostStockItemJSONRequestBody defines body for PostStockItem for application/json ContentType.
 type PostStockItemJSONRequestBody PostStockItemJSONBody
+
+// PutStockItemJSONRequestBody defines body for PutStockItem for application/json ContentType.
+type PutStockItemJSONRequestBody PutStockItemJSONBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// Create Stock Item
 	// (POST /stock/items)
 	PostStockItem(ctx echo.Context) error
+	// Update Stock Item
+	// (PUT /stock/items/{id})
+	PutStockItem(ctx echo.Context, id openapi_types.UUID) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -50,6 +72,22 @@ func (w *ServerInterfaceWrapper) PostStockItem(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.PostStockItem(ctx)
+	return err
+}
+
+// PutStockItem converts echo context to params.
+func (w *ServerInterfaceWrapper) PutStockItem(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.PutStockItem(ctx, id)
 	return err
 }
 
@@ -82,5 +120,6 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	}
 
 	router.POST(baseURL+"/stock/items", wrapper.PostStockItem)
+	router.PUT(baseURL+"/stock/items/:id", wrapper.PutStockItem)
 
 }

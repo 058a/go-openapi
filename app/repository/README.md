@@ -15,5 +15,5 @@ docker run --rm -v ./db/migrations:/migrations --network openapi-golang_default 
 
 ## sqlboiler
 ```
-docker run --rm -v ./:/sqlboiler --network openapi-golang_default curvegrid/sqlboiler:psql psql --output ./repository/models --pkgname repository --wipe && go mod tidy
+docker run --rm -v ./:/sqlboiler --network openapi-golang_default curvegrid/sqlboiler:psql psql --output ./repository/models --pkgname repository_models --wipe && go mod tidy
 ```

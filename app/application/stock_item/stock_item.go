@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
 	domain "openapi/domain/models"
@@ -15,20 +14,25 @@ func PostStockItem(ctx echo.Context, db *sql.DB) error {
 	request := &PostStockItemJSONBody{}
 	ctx.Bind(&request)
 
-	stockItem := domain.StockItem{
-		Id:   uuid.New(),
-		Name: request.Name,
-	}
+	stockItem := domain.NewStockItem(request.Name)
 
-	stockItemRepository := repository.StockItem{}
-	storeErr := stockItemRepository.Insert(db, stockItem)
+	stockItemRepository := repository.StockItemRepository{}
+	storeErr := stockItemRepository.Save(db, *stockItem)
 	if storeErr != nil {
 		return ctx.JSON(http.StatusInternalServerError, storeErr)
 	}
 
-	createdResponse := &CreatedResponse{
+	createdResponse := &StockItem{
 		Id: stockItem.Id,
 	}
 
 	return ctx.JSON(http.StatusCreated, createdResponse)
+}
+
+func PutStockItem(ctx echo.Context, db *sql.DB) error {
+	request := &PostStockItemJSONBody{}
+	ctx.Bind(&request)
+	stockItemId := ctx.Param("id")
+
+	return ctx.JSON(http.StatusOK, nil)
 }
