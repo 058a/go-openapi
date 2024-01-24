@@ -1,0 +1,1 @@
+docker run --rm -v ./:/sqlboiler --network deployments_default curvegrid/sqlboiler:psql psql --output ./codegen --pkgname datasource && sudo chown -R k8suser ./codegen && mv ./codegen ./../../internal/infra/sqlboiler/ && go mod tidy

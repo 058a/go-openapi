@@ -1,0 +1,3 @@
+docker exec -it openapi-golang go test ./../../...
+
+docker exec -it openapi-golang go clean -testcache

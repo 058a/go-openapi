@@ -1,0 +1,6 @@
+package: oapicodegen
+generate:
+  models: true
+output: externalref.gen.go
+output-options:
+  skip-prune: true
