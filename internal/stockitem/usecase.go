@@ -11,6 +11,10 @@ type PostStockItemUseCaseResponseDto struct {
 	Id uuid.UUID
 }
 
+// PostStockItemUseCase is a Go function that handles posting a stock item.
+//
+// It takes a requestDto of type PostStockItemUseCaseRequestDto and a repository of type *StockItemRepository as parameters.
+// It returns a PostStockItemUseCaseResponseDto and an error.
 func PostStockItemUseCase(
 	requestDto PostStockItemUseCaseRequestDto,
 	repository *StockItemRepository) (PostStockItemUseCaseResponseDto, error) {

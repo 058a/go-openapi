@@ -16,6 +16,8 @@ type StockItemRepository struct {
 	db *sql.DB
 }
 
+// Save saves the stock item model to the repository.
+// It takes a StockItemModel as a parameter and returns an error.
 func (r *StockItemRepository) Save(model StockItemModel) error {
 
 	exists, findErr := sqlboiler.FindStockItem(context.Background(), r.db, model.Id.String())

@@ -9,6 +9,9 @@ import (
 	"openapi/internal/infra/oapi_codegen/stockitem_api"
 )
 
+// PostStockItem is a function that handles the HTTP POST request for creating a new stock item.
+//
+// It takes in a context object and returns an error.
 func PostStockItem(ctx echo.Context) error {
 	request := &stockitem_api.PostStockItemJSONBody{}
 	ctx.Bind(&request)

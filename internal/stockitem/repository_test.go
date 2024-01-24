@@ -10,6 +10,9 @@ import (
 	"github.com/google/uuid"
 )
 
+// TestStockItemRepository is a Go function for testing the StockItemRepository.
+//
+// It takes a testing.T parameter and does not return anything.
 func TestStockItemRepository(t *testing.T) {
 
 	db, dbErr := database.New()

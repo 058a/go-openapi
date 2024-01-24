@@ -7,6 +7,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// TestPostStockItemUseCase is a test function for the PostStockItemUseCase.
+// It tests the functionality of the PostStockItemUseCase with various scenarios.
 func TestPostStockItemUseCase(t *testing.T) {
 
 	requestDto := PostStockItemUseCaseRequestDto{uuid.NewString()}

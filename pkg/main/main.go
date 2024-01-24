@@ -10,6 +10,10 @@ import (
 	"openapi/internal/stockitem"
 )
 
+// main is the entry point of the program.
+//
+// No parameters.
+// No return type.
 func main() {
 	e := echo.New()
 
