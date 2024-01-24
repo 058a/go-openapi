@@ -15,7 +15,7 @@ func PostStockItemUseCase(
 	requestDto PostStockItemUseCaseRequestDto,
 	repository *StockItemRepository) (PostStockItemUseCaseResponseDto, error) {
 
-	stockItem := NewStockItem(requestDto.Name)
+	stockItem := NewStockItemModel(requestDto.Name)
 
 	saveErr := repository.Save(*stockItem)
 	if saveErr != nil {

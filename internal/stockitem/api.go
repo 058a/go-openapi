@@ -20,16 +20,16 @@ func PostStockItem(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, dbErr)
 	}
 	defer db.Close()
-	stockItemRepository := &StockItemRepository{db}
+	repository := &StockItemRepository{db}
 
-	responseDto, err := PostStockItemUseCase(requestDto, stockItemRepository)
+	responseDto, err := PostStockItemUseCase(requestDto, repository)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, err)
 	}
 
-	createdResponse := &stockitem_api.Created{
+	response := &stockitem_api.Created{
 		Id: responseDto.Id,
 	}
 
-	return ctx.JSON(http.StatusCreated, createdResponse)
+	return ctx.JSON(http.StatusCreated, response)
 }

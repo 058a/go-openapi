@@ -18,7 +18,7 @@ func TestStockItemRepository(t *testing.T) {
 	}
 	defer db.Close()
 
-	stockItem := NewStockItem(uuid.NewString())
+	stockItem := NewStockItemModel(uuid.NewString())
 
 	stockItemRepository := &StockItemRepository{db}
 	storeErr := stockItemRepository.Save(*stockItem)

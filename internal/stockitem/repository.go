@@ -16,21 +16,21 @@ type StockItemRepository struct {
 	db *sql.DB
 }
 
-func (r *StockItemRepository) Save(stockItem StockItemModel) error {
+func (r *StockItemRepository) Save(model StockItemModel) error {
 
-	exists, findErr := sqlboiler.FindStockItem(context.Background(), r.db, stockItem.Id.String())
-	stockItemRecord := sqlboiler.StockItem{}
+	exists, findErr := sqlboiler.FindStockItem(context.Background(), r.db, model.Id.String())
+	stockItem := sqlboiler.StockItem{}
 	if findErr != nil {
-		stockItemRecord.ID = stockItem.Id.String()
-		stockItemRecord.Name = stockItem.Name
-		dbExecErr := stockItemRecord.Insert(context.Background(), r.db, boil.Infer())
+		stockItem.ID = model.Id.String()
+		stockItem.Name = model.Name
+		dbExecErr := stockItem.Insert(context.Background(), r.db, boil.Infer())
 		if dbExecErr != nil {
 			return dbExecErr
 		}
 	} else {
-		stockItemRecord.ID = exists.ID
-		stockItemRecord.Name = stockItem.Name
-		stockItemRecord.Update(context.Background(), r.db, boil.Infer())
+		stockItem.ID = exists.ID
+		stockItem.Name = model.Name
+		stockItem.Update(context.Background(), r.db, boil.Infer())
 	}
 
 	return nil

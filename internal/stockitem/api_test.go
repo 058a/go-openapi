@@ -19,34 +19,34 @@ import (
 func TestPostStockItem(t *testing.T) {
 
 	// When
-	request := &stockitem_api.PostStockItemJSONBody{
+	requestBody := &stockitem_api.PostStockItemJSONBody{
 		Name: uuid.NewString(),
 	}
-	requestJson, _ := json.Marshal(request)
+	requestBodyJson, _ := json.Marshal(requestBody)
 	client := http.Client{}
-	req, newReqErr := http.NewRequest(
+	request, newReqErr := http.NewRequest(
 		http.MethodPost,
 		"http://localhost:3000/stock/items",
-		bytes.NewBuffer(requestJson))
+		bytes.NewBuffer(requestBodyJson))
 	if newReqErr != nil {
 		t.Fatal(newReqErr)
 	}
-	req.Header.Set("Content-Type", "application/json")
-	res, reqErr := client.Do(req)
+	request.Header.Set("Content-Type", "application/json")
+	response, reqErr := client.Do(request)
 	if reqErr != nil {
 		t.Fatal(reqErr)
 	}
-	defer res.Body.Close()
-	resBodyByte, _ := io.ReadAll(res.Body)
-	actualCreatedResponse := &stockitem_api.Created{}
-	json.Unmarshal(resBodyByte, &actualCreatedResponse)
+	defer response.Body.Close()
+	resBodyByte, _ := io.ReadAll(response.Body)
+	actualResponse := &stockitem_api.Created{}
+	json.Unmarshal(resBodyByte, &actualResponse)
 
 	// Then
-	if res.StatusCode != http.StatusCreated {
-		t.Errorf("want %d, got %d", http.StatusCreated, res.StatusCode)
+	if response.StatusCode != http.StatusCreated {
+		t.Errorf("want %d, got %d", http.StatusCreated, response.StatusCode)
 	}
 
-	if actualCreatedResponse.Id == uuid.Nil {
+	if actualResponse.Id == uuid.Nil {
 		t.Errorf("expected not empty, actual empty")
 	}
 

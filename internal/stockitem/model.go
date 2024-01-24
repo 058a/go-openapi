@@ -9,9 +9,9 @@ type StockItemModel struct {
 	Name string
 }
 
-func NewStockItem(Name string) *StockItemModel {
+func NewStockItemModel(name string) *StockItemModel {
 	return &StockItemModel{
 		Id:   uuid.New(),
-		Name: Name,
+		Name: name,
 	}
 }

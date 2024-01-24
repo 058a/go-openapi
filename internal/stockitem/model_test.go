@@ -8,7 +8,7 @@ import (
 
 func TestStockItem(t *testing.T) {
 
-	stockItem := NewStockItem("test")
+	stockItem := NewStockItemModel("test")
 	if stockItem.Id == uuid.Nil {
 		t.Errorf("expected not empty, actual empty")
 	}
