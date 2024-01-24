@@ -19,6 +19,9 @@ paths:
               properties:
                 name:
                   type: string
+                  validation:
+                    minLength: 1
+                    maxLength: 100
       responses:
         "201":
           $ref: "#/components/responses/Created"
@@ -49,6 +52,9 @@ paths:
               properties:
                 name:
                   type: string
+                  validation:
+                    minLength: 1
+                    maxLength: 100
       responses:
         "200":
           $ref: "#/components/responses/OK"
