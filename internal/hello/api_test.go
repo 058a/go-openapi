@@ -11,7 +11,9 @@ import (
 	"net/http"
 )
 
-// http://localhost:3000/ にGETでアクセスし、戻り値を検証する
+// TestHello is a function to test the hello API.
+//
+// It takes a testing.T parameter and has no return type.
 func TestHello(t *testing.T) {
 	res, err := http.Get("http://localhost:3000/")
 	if err != nil {
