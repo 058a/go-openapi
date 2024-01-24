@@ -26,4 +26,13 @@ func TestPostStockItemUseCase(t *testing.T) {
 	if responseDto.Id == uuid.Nil {
 		t.Errorf("want not nil, got nil")
 	}
+
+	model, getErr := repository.Get(responseDto.Id)
+	if getErr != nil {
+		t.Fatal(getErr)
+	}
+
+	if model.Name != requestDto.Name {
+		t.Errorf("want %s, got %s", requestDto.Name, model.Name)
+	}
 }
