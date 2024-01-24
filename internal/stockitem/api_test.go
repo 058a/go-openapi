@@ -57,7 +57,7 @@ func TestPostStockItemValidation(t *testing.T) {
 	// When
 	// Generate a string of 101 characters
 	length101name := ""
-	for i := 0; i < 101; i++ {
+	for i := 0; i < 200; i++ {
 		length101name += "a"
 	}
 

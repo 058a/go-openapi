@@ -16,6 +16,19 @@ func PostStockItem(ctx echo.Context) error {
 	request := &stockitem_api.PostStockItemJSONBody{}
 	ctx.Bind(&request)
 
+	// req := ctx.Request()
+	// reqInput := &openapi3filter.RequestValidationInput{
+	// 	Request:     req,
+	// 	PathParams:  nil,
+	// 	QueryParams: nil,
+	// 	Route:       &routers.Route{},
+	// 	// Options: nil, // ?
+	// 	// ParamDecoder: nil, // ?
+	// }
+	// if err := openapi3filter.ValidateRequest(context.Background(), reqInput); err != nil {
+	// 	return ctx.JSON(http.StatusBadRequest, err)
+	// }
+
 	requestDto := PostStockItemUseCaseRequestDto{request.Name}
 
 	db, dbErr := database.New()
