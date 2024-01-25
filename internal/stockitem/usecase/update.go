@@ -11,6 +11,7 @@ import (
 )
 
 type UnverifiedUpdateRequestDto struct {
+	Id   string
 	Name string
 }
 
@@ -19,15 +20,22 @@ func (s UnverifiedUpdateRequestDto) Verify() (*VerifiedUpdateRequestDto, error) 
 	if !(len(trimedName) > 0 && len(trimedName) <= 100) {
 		return nil, fmt.Errorf("name length should be between 1 and 100")
 	}
-	return &VerifiedUpdateRequestDto{s.Name}, nil
+
+	parcedId := uuid.MustParse(s.Id)
+
+	return &VerifiedUpdateRequestDto{
+		Id:   parcedId,
+		Name: s.Name,
+	}, nil
 }
 
 type VerifiedUpdateRequestDto struct {
+	Id   uuid.UUID
 	Name string
 }
 
 func (s VerifiedUpdateRequestDto) GenerateModel() *model.StockItemModel {
-	return model.New(s.Name)
+	return model.Renew(s.Id, s.Name)
 }
 
 type UpdateResponseDto struct {

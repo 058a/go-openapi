@@ -22,7 +22,7 @@ func main() {
 
 	e.GET("/", hello.Get)
 	e.POST("/stock/items", stockitem.Post)
-	e.PUT("/stock/items", stockitem.Put)
+	e.PUT("/stock/items/:id", stockitem.Put)
 
 	e.Logger.Fatal(e.Start(":3000"))
 }

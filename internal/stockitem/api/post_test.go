@@ -16,14 +16,17 @@ import (
 	"net/http"
 )
 
-func TestPost(t *testing.T) {
+func TestPostSuccess(t *testing.T) {
+
+	// Setup
+	client := http.Client{}
+	stockItemName := uuid.NewString()
 
 	// When
 	postRequestBody := &oapicodegen.PostStockItemJSONBody{
-		Name: uuid.NewString(),
+		Name: stockItemName,
 	}
 	postRequestBodyJson, _ := json.Marshal(postRequestBody)
-	client := http.Client{}
 	postRequest, newReqErr := http.NewRequest(
 		http.MethodPost,
 		"http://localhost:3000/stock/items",
@@ -37,9 +40,9 @@ func TestPost(t *testing.T) {
 		t.Fatal(reqErr)
 	}
 	defer postResponse.Body.Close()
-	resBodyByte, _ := io.ReadAll(postResponse.Body)
+	postResponseBodyByte, _ := io.ReadAll(postResponse.Body)
 	postResponseBody := &oapicodegen.Created{}
-	json.Unmarshal(resBodyByte, &postResponseBody)
+	json.Unmarshal(postResponseBodyByte, &postResponseBody)
 
 	// Then
 	if postResponse.StatusCode != http.StatusCreated {
@@ -52,35 +55,37 @@ func TestPost(t *testing.T) {
 
 }
 
-func TestPostValidation(t *testing.T) {
+func TestPostInvalidError(t *testing.T) {
 
+	// Setup
 	// Generate a string of 101 characters
-	longName := strings.Repeat("a", 101)
-
-	requestBody := &oapicodegen.PostStockItemJSONBody{
-		Name: longName,
-	}
-	requestBodyJson, _ := json.Marshal(requestBody)
 	client := http.Client{}
-	request, newReqErr := http.NewRequest(
+	stockItemName := strings.Repeat("a", 101)
+
+	// When
+	postRequestBody := &oapicodegen.PostStockItemJSONBody{
+		Name: stockItemName,
+	}
+	postRequestBodyJson, _ := json.Marshal(postRequestBody)
+	postRequest, newReqErr := http.NewRequest(
 		http.MethodPost,
 		"http://localhost:3000/stock/items",
-		bytes.NewBuffer(requestBodyJson))
+		bytes.NewBuffer(postRequestBodyJson))
 	if newReqErr != nil {
 		t.Fatal(newReqErr)
 	}
-	request.Header.Set("Content-Type", "application/json")
-	response, reqErr := client.Do(request)
+	postRequest.Header.Set("Content-Type", "application/json")
+	postResponse, reqErr := client.Do(postRequest)
 	if reqErr != nil {
 		t.Fatal(reqErr)
 	}
-	defer response.Body.Close()
-	resBodyByte, _ := io.ReadAll(response.Body)
-	actualResponse := &oapicodegen.Created{}
-	json.Unmarshal(resBodyByte, &actualResponse)
+	defer postResponse.Body.Close()
+	postResponseBodyByte, _ := io.ReadAll(postResponse.Body)
+	postResponseBody := &oapicodegen.Created{}
+	json.Unmarshal(postResponseBodyByte, &postResponseBody)
 
 	// Then
-	if response.StatusCode != http.StatusBadRequest {
-		t.Errorf("want %d, got %d", http.StatusBadRequest, response.StatusCode)
+	if postResponse.StatusCode != http.StatusBadRequest {
+		t.Errorf("want %d, got %d", http.StatusBadRequest, postResponse.StatusCode)
 	}
 }

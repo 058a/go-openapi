@@ -16,14 +16,18 @@ import (
 	"net/http"
 )
 
-func TestPut(t *testing.T) {
+func TestPutSuccess(t *testing.T) {
 
-	// When
+	// Setup
+	client := http.Client{}
+	stockItemName := uuid.NewString()
+	updatedStockItemName := uuid.NewString()
+
+	// Given
 	postRequestBody := &oapicodegen.PostStockItemJSONBody{
-		Name: uuid.NewString(),
+		Name: stockItemName,
 	}
 	postRequestBodyJson, _ := json.Marshal(postRequestBody)
-	client := http.Client{}
 	postRequest, newReqErr := http.NewRequest(
 		http.MethodPost,
 		"http://localhost:3000/stock/items",
@@ -37,50 +41,144 @@ func TestPut(t *testing.T) {
 		t.Fatal(reqErr)
 	}
 	defer postResponse.Body.Close()
-	resBodyByte, _ := io.ReadAll(postResponse.Body)
+	postResponseBodyByte, _ := io.ReadAll(postResponse.Body)
 	postResponseBody := &oapicodegen.Created{}
-	json.Unmarshal(resBodyByte, &postResponseBody)
+	json.Unmarshal(postResponseBodyByte, &postResponseBody)
 
-	// Then
 	if postResponse.StatusCode != http.StatusCreated {
-		t.Errorf("want %d, got %d", http.StatusCreated, postResponse.StatusCode)
+		t.Fatal(reqErr)
 	}
 
 	if postResponseBody.Id == uuid.Nil {
-		t.Errorf("expected not empty, actual empty")
+		t.Fatal(reqErr)
 	}
 
-}
-
-func TestPutValidation(t *testing.T) {
-
-	// Generate a string of 101 characters
-	longName := strings.Repeat("a", 101)
-
-	requestBody := &oapicodegen.PostStockItemJSONBody{
-		Name: longName,
+	// When
+	putRequestBody := &oapicodegen.PutStockItemJSONBody{
+		Name: updatedStockItemName,
 	}
-	requestBodyJson, _ := json.Marshal(requestBody)
-	client := http.Client{}
-	request, newReqErr := http.NewRequest(
-		http.MethodPost,
-		"http://localhost:3000/stock/items",
-		bytes.NewBuffer(requestBodyJson))
+	putRequestBodyJson, _ := json.Marshal(putRequestBody)
+	putRequest, newReqErr := http.NewRequest(
+		http.MethodPut,
+		"http://localhost:3000/stock/items/"+postResponseBody.Id.String(),
+		bytes.NewBuffer(putRequestBodyJson))
 	if newReqErr != nil {
 		t.Fatal(newReqErr)
 	}
-	request.Header.Set("Content-Type", "application/json")
-	response, reqErr := client.Do(request)
+	putRequest.Header.Set("Content-Type", "application/json")
+	putResponse, reqErr := client.Do(putRequest)
 	if reqErr != nil {
 		t.Fatal(reqErr)
 	}
-	defer response.Body.Close()
-	resBodyByte, _ := io.ReadAll(response.Body)
-	actualResponse := &oapicodegen.OK{}
-	json.Unmarshal(resBodyByte, &actualResponse)
+	defer putResponse.Body.Close()
+	putResponseBodyByte, _ := io.ReadAll(putResponse.Body)
+	putResponseBody := &oapicodegen.Created{}
+	json.Unmarshal(putResponseBodyByte, &putResponseBody)
 
 	// Then
-	if response.StatusCode != http.StatusBadRequest {
-		t.Errorf("want %d, got %d", http.StatusBadRequest, response.StatusCode)
+	if putResponse.StatusCode != http.StatusOK {
+		t.Errorf("want %d, got %d", http.StatusOK, putResponse.StatusCode)
+	}
+}
+
+func TestPutInvalidError(t *testing.T) {
+
+	// Setup
+	// Generate a string of 101 characters
+	client := http.Client{}
+	stockItemName := uuid.NewString()
+	updatedStockItemName := strings.Repeat("a", 101)
+
+	// Given
+	postRequestBody := &oapicodegen.PostStockItemJSONBody{
+		Name: stockItemName,
+	}
+	postRequestBodyJson, _ := json.Marshal(postRequestBody)
+	postRequest, newReqErr := http.NewRequest(
+		http.MethodPost,
+		"http://localhost:3000/stock/items",
+		bytes.NewBuffer(postRequestBodyJson))
+	if newReqErr != nil {
+		t.Fatal(newReqErr)
+	}
+	postRequest.Header.Set("Content-Type", "application/json")
+	postResponse, reqErr := client.Do(postRequest)
+	if reqErr != nil {
+		t.Fatal(reqErr)
+	}
+	defer postResponse.Body.Close()
+	postResponseBodyByte, _ := io.ReadAll(postResponse.Body)
+	postResponseBody := &oapicodegen.Created{}
+	json.Unmarshal(postResponseBodyByte, &postResponseBody)
+
+	if postResponse.StatusCode != http.StatusCreated {
+		t.Fatal(reqErr)
+	}
+
+	if postResponseBody.Id == uuid.Nil {
+		t.Fatal(reqErr)
+	}
+
+	// When
+	putRequestBody := &oapicodegen.PutStockItemJSONBody{
+		Name: updatedStockItemName,
+	}
+	putRequestBodyJson, _ := json.Marshal(putRequestBody)
+	putRequest, newReqErr := http.NewRequest(
+		http.MethodPut,
+		"http://localhost:3000/stock/items/"+postResponseBody.Id.String(),
+		bytes.NewBuffer(putRequestBodyJson))
+	if newReqErr != nil {
+		t.Fatal(newReqErr)
+	}
+	putRequest.Header.Set("Content-Type", "application/json")
+	putResponse, reqErr := client.Do(putRequest)
+	if reqErr != nil {
+		t.Fatal(reqErr)
+	}
+	defer putResponse.Body.Close()
+	putResponseBodyByte, _ := io.ReadAll(putResponse.Body)
+	putResponseBody := &oapicodegen.Created{}
+	json.Unmarshal(putResponseBodyByte, &putResponseBody)
+
+	// Then
+	if putResponse.StatusCode != http.StatusBadRequest {
+		t.Errorf("want %d, got %d", http.StatusBadRequest, putResponse.StatusCode)
+	}
+}
+
+func TestPutNotExistError(t *testing.T) {
+
+	// Setup
+	// Generate a string of 101 characters
+	client := http.Client{}
+	stockItemId := uuid.NewString()
+	updatedStockItemName := uuid.NewString()
+
+	// When
+	putRequestBody := &oapicodegen.PutStockItemJSONBody{
+		Name: updatedStockItemName,
+	}
+	putRequestBodyJson, _ := json.Marshal(putRequestBody)
+	putRequest, newReqErr := http.NewRequest(
+		http.MethodPut,
+		"http://localhost:3000/stock/items/"+stockItemId,
+		bytes.NewBuffer(putRequestBodyJson))
+	if newReqErr != nil {
+		t.Fatal(newReqErr)
+	}
+	putRequest.Header.Set("Content-Type", "application/json")
+	putResponse, reqErr := client.Do(putRequest)
+	if reqErr != nil {
+		t.Fatal(reqErr)
+	}
+	defer putResponse.Body.Close()
+	putResponseBodyByte, _ := io.ReadAll(putResponse.Body)
+	putResponseBody := &oapicodegen.Created{}
+	json.Unmarshal(putResponseBodyByte, &putResponseBody)
+
+	// Then
+	if putResponse.StatusCode != http.StatusNotFound {
+		t.Errorf("want %d, got %d", http.StatusNotFound, putResponse.StatusCode)
 	}
 }

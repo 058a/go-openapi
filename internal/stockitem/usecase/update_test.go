@@ -11,7 +11,9 @@ import (
 
 func TestUpdateUseCase(t *testing.T) {
 
-	requestDto := VerifiedUpdateRequestDto{uuid.NewString()}
+	requestDto := VerifiedUpdateRequestDto{
+		Id:   uuid.New(),
+		Name: uuid.NewString()}
 
 	db, dbErr := database.New()
 	if dbErr != nil {

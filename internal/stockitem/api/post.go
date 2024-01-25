@@ -12,30 +12,30 @@ import (
 )
 
 // PostStockItem is a function that handles the HTTP POST request for creating a new stock item.
-func Post(ctx echo.Context) error {
+func Post(c echo.Context) error {
 	request := &oapicodegen.PostStockItemJSONBody{}
-	ctx.Bind(&request)
+	c.Bind(&request)
 
 	UnverifiedRequestDto := usecase.UnverifiedCreateRequestDto{Name: request.Name}
 	verifiedRequestDto, verfyErr := UnverifiedRequestDto.Verify()
 	if verfyErr != nil {
-		return ctx.JSON(http.StatusBadRequest, verfyErr)
+		return c.JSON(http.StatusBadRequest, verfyErr)
 	}
 
 	db, dbErr := database.New()
 	if dbErr != nil {
-		return ctx.JSON(http.StatusInternalServerError, dbErr)
+		return c.JSON(http.StatusInternalServerError, dbErr)
 	}
 	defer db.Close()
 
 	responseDto, err := usecase.CreateStockItemUseCase(verifiedRequestDto, db)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	response := &oapicodegen.Created{
 		Id: responseDto.Id,
 	}
 
-	return ctx.JSON(http.StatusCreated, response)
+	return c.JSON(http.StatusCreated, response)
 }

@@ -8,34 +8,45 @@ import (
 	"openapi/internal/infra/database"
 	oapicodegen "openapi/internal/infra/oapi_codegen/stockitem"
 
+	"openapi/internal/stockitem/repository"
 	"openapi/internal/stockitem/usecase"
 )
 
 // PutStockItem is a function that handles the HTTP PUT request for updating an existing stock item.
-func Put(ctx echo.Context) error {
-	request := &oapicodegen.PutStockItemJSONRequestBody{}
-	ctx.Bind(&request)
+func Put(c echo.Context) error {
+	id := c.Param("id")
 
-	unverifiedRequestDto := usecase.UnverifiedUpdateRequestDto{Name: request.Name}
-	verifiedRequestDto, verfyErr := unverifiedRequestDto.Verify()
-	if verfyErr != nil {
-		return ctx.JSON(http.StatusBadRequest, verfyErr)
-	}
+	request := &oapicodegen.PutStockItemJSONRequestBody{}
+	c.Bind(&request)
+
+	unverifiedRequestDto := usecase.UnverifiedUpdateRequestDto{
+		Id:   id,
+		Name: request.Name}
 
 	db, dbErr := database.New()
 	if dbErr != nil {
-		return ctx.JSON(http.StatusInternalServerError, dbErr)
+		return c.JSON(http.StatusInternalServerError, dbErr)
 	}
 	defer db.Close()
 
+	verifiedRequestDto, verfyErr := unverifiedRequestDto.Verify()
+	if verfyErr != nil {
+		return c.JSON(http.StatusBadRequest, verfyErr)
+	}
+
+	_, getErr := repository.Get(db, verifiedRequestDto.Id)
+	if getErr != nil {
+		return c.JSON(http.StatusNotFound, getErr)
+	}
+
 	responseDto, err := usecase.UpdateStockItemUseCase(*verifiedRequestDto, db)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	response := &oapicodegen.Created{
 		Id: responseDto.Id,
 	}
 
-	return ctx.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusOK, response)
 }
