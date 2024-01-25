@@ -1,4 +1,4 @@
-package stockitem
+package repository
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/boil"
 
 	"openapi/internal/infra/sqlboiler"
+	"openapi/internal/stockitem/model"
 )
 
 type StockItemRepository struct {
@@ -18,7 +19,7 @@ type StockItemRepository struct {
 
 // Save saves the stock item model to the repository.
 // It takes a StockItemModel as a parameter and returns an error.
-func (r *StockItemRepository) Save(model StockItemModel) error {
+func (r *StockItemRepository) Save(model model.StockItemModel) error {
 
 	exists, findErr := sqlboiler.FindStockItem(context.Background(), r.db, model.Id.String())
 	stockItem := sqlboiler.StockItem{}
@@ -38,13 +39,13 @@ func (r *StockItemRepository) Save(model StockItemModel) error {
 	return nil
 }
 
-func (r *StockItemRepository) Get(id uuid.UUID) (StockItemModel, error) {
+func (r *StockItemRepository) Get(id uuid.UUID) (model.StockItemModel, error) {
 	exists, findErr := sqlboiler.FindStockItem(context.Background(), r.db, id.String())
 	if findErr != nil {
-		return StockItemModel{}, findErr
+		return model.StockItemModel{}, findErr
 	}
 
-	stockItem := StockItemModel{
+	stockItem := model.StockItemModel{
 		Id:   uuid.MustParse(exists.ID),
 		Name: exists.Name,
 	}

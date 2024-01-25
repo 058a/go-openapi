@@ -1,4 +1,4 @@
-package stockitem
+package model
 
 import (
 	"testing"
@@ -8,7 +8,7 @@ import (
 
 func TestNewStockItemModelSuccess(t *testing.T) {
 
-	stockItem := NewStockItemModel("test")
+	stockItem := New("test")
 
 	if stockItem.Id == uuid.Nil {
 		t.Errorf("expected not empty, actual empty")

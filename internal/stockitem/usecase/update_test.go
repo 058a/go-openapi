@@ -1,24 +1,25 @@
-package stockitem
+package usecase
 
 import (
-	"openapi/internal/infra/database"
 	"testing"
+
+	"openapi/internal/infra/database"
+	"openapi/internal/stockitem/repository"
 
 	"github.com/google/uuid"
 )
 
 func TestUpdateUseCase(t *testing.T) {
 
-	requestDto := VerifiedUpdateUseCaseRequestDto{uuid.NewString()}
+	requestDto := VerifiedUpdateRequestDto{uuid.NewString()}
 
 	db, dbErr := database.New()
 	if dbErr != nil {
 		t.Fatal(dbErr)
 	}
 	defer db.Close()
-	repository := &StockItemRepository{db}
 
-	responseDto, err := UpdateStockItemUseCase(requestDto, repository)
+	responseDto, err := UpdateStockItemUseCase(requestDto, db)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,7 +28,7 @@ func TestUpdateUseCase(t *testing.T) {
 		t.Errorf("want not nil, got nil")
 	}
 
-	model, getErr := repository.Get(responseDto.Id)
+	model, getErr := repository.Get(db, responseDto.Id)
 	if getErr != nil {
 		t.Fatal(getErr)
 	}

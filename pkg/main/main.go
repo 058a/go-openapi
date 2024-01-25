@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 
 	"openapi/internal/hello"
-	"openapi/internal/stockitem"
+	stockitem_api "openapi/internal/stockitem/api"
 )
 
 // main is the entry point of the program.
@@ -21,7 +21,8 @@ func main() {
 	e.Use(middleware.Recover())
 
 	e.GET("/", hello.GetHello)
-	e.POST("/stock/items", stockitem.PostStockItem)
+	e.POST("/stock/items", stockitem_api.PostStockItem)
+	e.PUT("/stock/items", stockitem_api.PutStockItem)
 
 	e.Logger.Fatal(e.Start(":3000"))
 }

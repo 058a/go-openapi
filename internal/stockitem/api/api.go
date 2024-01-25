@@ -1,4 +1,4 @@
-package stockitem
+package api
 
 import (
 	"net/http"
@@ -7,6 +7,8 @@ import (
 
 	"openapi/internal/infra/database"
 	"openapi/internal/infra/oapi_codegen/stockitem_api"
+
+	"openapi/internal/stockitem/usecase"
 )
 
 // PostStockItem is a function that handles the HTTP POST request for creating a new stock item.
@@ -16,7 +18,7 @@ func PostStockItem(ctx echo.Context) error {
 	request := &stockitem_api.PostStockItemJSONBody{}
 	ctx.Bind(&request)
 
-	UnverifiedRequestDto := UnverifiedCreateUseCaseRequestDto{request.Name}
+	UnverifiedRequestDto := usecase.UnverifiedCreateRequestDto{Name: request.Name}
 	verifiedRequestDto, verfyErr := UnverifiedRequestDto.Verify()
 	if verfyErr != nil {
 		return ctx.JSON(http.StatusBadRequest, verfyErr)
@@ -27,9 +29,8 @@ func PostStockItem(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, dbErr)
 	}
 	defer db.Close()
-	repository := &StockItemRepository{db}
 
-	responseDto, err := CreateStockItemUseCase(*verifiedRequestDto, repository)
+	responseDto, err := usecase.CreateStockItemUseCase(verifiedRequestDto, db)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, err)
 	}
@@ -45,8 +46,8 @@ func PutStockItem(ctx echo.Context) error {
 	request := &stockitem_api.PutStockItemJSONRequestBody{}
 	ctx.Bind(&request)
 
-	unverifiedRequestDto := UnverifiedUpdateUseCaseRequestDto{request.Name}
-	VerifiedRequestDto, verfyErr := unverifiedRequestDto.Verify()
+	unverifiedRequestDto := usecase.UnverifiedUpdateRequestDto{Name: request.Name}
+	verifiedRequestDto, verfyErr := unverifiedRequestDto.Verify()
 	if verfyErr != nil {
 		return ctx.JSON(http.StatusBadRequest, verfyErr)
 	}
@@ -56,9 +57,8 @@ func PutStockItem(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, dbErr)
 	}
 	defer db.Close()
-	repository := &StockItemRepository{db}
 
-	responseDto, err := UpdateStockItemUseCase(*VerifiedRequestDto, repository)
+	responseDto, err := usecase.UpdateStockItemUseCase(*verifiedRequestDto, db)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, err)
 	}

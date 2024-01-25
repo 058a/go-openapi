@@ -1,4 +1,4 @@
-package stockitem
+package model
 
 import (
 	"github.com/google/uuid"
@@ -12,9 +12,16 @@ type StockItemModel struct {
 // NewStockItemModel creates a new StockItemModel.
 //
 // It takes a name string as a parameter and returns a pointer to StockItemModel.
-func NewStockItemModel(name string) *StockItemModel {
+func New(name string) *StockItemModel {
 	return &StockItemModel{
 		Id:   uuid.New(),
+		Name: name,
+	}
+}
+
+func Renew(id uuid.UUID, name string) *StockItemModel {
+	return &StockItemModel{
+		Id:   id,
 		Name: name,
 	}
 }

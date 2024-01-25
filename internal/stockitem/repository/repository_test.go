@@ -1,4 +1,4 @@
-package stockitem
+package repository
 
 import (
 	"testing"
@@ -8,6 +8,8 @@ import (
 	"openapi/internal/infra/database"
 
 	"github.com/google/uuid"
+
+	"openapi/internal/stockitem/model"
 )
 
 // TestStockItemRepository is a Go function for testing the StockItemRepository.
@@ -21,15 +23,14 @@ func TestStockItemRepository(t *testing.T) {
 	}
 	defer db.Close()
 
-	stockItem := NewStockItemModel(uuid.NewString())
+	stockItem := model.New(uuid.NewString())
 
-	stockItemRepository := &StockItemRepository{db}
-	storeErr := stockItemRepository.Save(*stockItem)
+	storeErr := Save(db, *stockItem)
 	if storeErr != nil {
 		t.Fatal(storeErr)
 	}
 
-	getStockItem, getErr := stockItemRepository.Get(stockItem.Id)
+	getStockItem, getErr := Get(db, stockItem.Id)
 	if getErr != nil {
 		t.Fatal(getErr)
 	}
