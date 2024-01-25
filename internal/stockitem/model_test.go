@@ -6,9 +6,10 @@ import (
 	"github.com/google/uuid"
 )
 
-func TestStockItem(t *testing.T) {
+func TestNewStockItemModelSuccess(t *testing.T) {
 
 	stockItem := NewStockItemModel("test")
+
 	if stockItem.Id == uuid.Nil {
 		t.Errorf("expected not empty, actual empty")
 	}

@@ -1,6 +1,7 @@
 package stockitem
 
 import (
+	"strings"
 	"testing"
 
 	"bytes"
@@ -19,34 +20,34 @@ import (
 func TestPostStockItem(t *testing.T) {
 
 	// When
-	requestBody := &stockitem_api.PostStockItemJSONBody{
+	postRequestBody := &stockitem_api.PostStockItemJSONBody{
 		Name: uuid.NewString(),
 	}
-	requestBodyJson, _ := json.Marshal(requestBody)
+	postRequestBodyJson, _ := json.Marshal(postRequestBody)
 	client := http.Client{}
-	request, newReqErr := http.NewRequest(
+	postRequest, newReqErr := http.NewRequest(
 		http.MethodPost,
 		"http://localhost:3000/stock/items",
-		bytes.NewBuffer(requestBodyJson))
+		bytes.NewBuffer(postRequestBodyJson))
 	if newReqErr != nil {
 		t.Fatal(newReqErr)
 	}
-	request.Header.Set("Content-Type", "application/json")
-	response, reqErr := client.Do(request)
+	postRequest.Header.Set("Content-Type", "application/json")
+	postResponse, reqErr := client.Do(postRequest)
 	if reqErr != nil {
 		t.Fatal(reqErr)
 	}
-	defer response.Body.Close()
-	resBodyByte, _ := io.ReadAll(response.Body)
-	actualResponse := &stockitem_api.Created{}
-	json.Unmarshal(resBodyByte, &actualResponse)
+	defer postResponse.Body.Close()
+	resBodyByte, _ := io.ReadAll(postResponse.Body)
+	postResponseBody := &stockitem_api.Created{}
+	json.Unmarshal(resBodyByte, &postResponseBody)
 
 	// Then
-	if response.StatusCode != http.StatusCreated {
-		t.Errorf("want %d, got %d", http.StatusCreated, response.StatusCode)
+	if postResponse.StatusCode != http.StatusCreated {
+		t.Errorf("want %d, got %d", http.StatusCreated, postResponse.StatusCode)
 	}
 
-	if actualResponse.Id == uuid.Nil {
+	if postResponseBody.Id == uuid.Nil {
 		t.Errorf("expected not empty, actual empty")
 	}
 
@@ -54,15 +55,11 @@ func TestPostStockItem(t *testing.T) {
 
 func TestPostStockItemValidation(t *testing.T) {
 
-	// When
 	// Generate a string of 101 characters
-	length101name := ""
-	for i := 0; i < 200; i++ {
-		length101name += "a"
-	}
+	longName := strings.Repeat("a", 101)
 
 	requestBody := &stockitem_api.PostStockItemJSONBody{
-		Name: length101name,
+		Name: longName,
 	}
 	requestBodyJson, _ := json.Marshal(requestBody)
 	client := http.Client{}

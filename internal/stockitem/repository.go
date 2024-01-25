@@ -24,7 +24,7 @@ func (r *StockItemRepository) Save(model StockItemModel) error {
 	stockItem := sqlboiler.StockItem{}
 	if findErr != nil {
 		stockItem.ID = model.Id.String()
-		stockItem.Name = model.Name
+		stockItem.Name = string(model.Name)
 		dbExecErr := stockItem.Insert(context.Background(), r.db, boil.Infer())
 		if dbExecErr != nil {
 			return dbExecErr

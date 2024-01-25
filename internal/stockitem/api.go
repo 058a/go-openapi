@@ -16,20 +16,11 @@ func PostStockItem(ctx echo.Context) error {
 	request := &stockitem_api.PostStockItemJSONBody{}
 	ctx.Bind(&request)
 
-	// req := ctx.Request()
-	// reqInput := &openapi3filter.RequestValidationInput{
-	// 	Request:     req,
-	// 	PathParams:  nil,
-	// 	QueryParams: nil,
-	// 	Route:       &routers.Route{},
-	// 	// Options: nil, // ?
-	// 	// ParamDecoder: nil, // ?
-	// }
-	// if err := openapi3filter.ValidateRequest(context.Background(), reqInput); err != nil {
-	// 	return ctx.JSON(http.StatusBadRequest, err)
-	// }
-
-	requestDto := PostStockItemUseCaseRequestDto{request.Name}
+	UnverifiedRequestDto := UnverifiedCreateUseCaseRequestDto{request.Name}
+	verifiedRequestDto, verfyErr := UnverifiedRequestDto.Verify()
+	if verfyErr != nil {
+		return ctx.JSON(http.StatusBadRequest, verfyErr)
+	}
 
 	db, dbErr := database.New()
 	if dbErr != nil {
@@ -38,7 +29,7 @@ func PostStockItem(ctx echo.Context) error {
 	defer db.Close()
 	repository := &StockItemRepository{db}
 
-	responseDto, err := PostStockItemUseCase(requestDto, repository)
+	responseDto, err := CreateStockItemUseCase(*verifiedRequestDto, repository)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, err)
 	}
@@ -48,4 +39,33 @@ func PostStockItem(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusCreated, response)
+}
+
+func PutStockItem(ctx echo.Context) error {
+	request := &stockitem_api.PutStockItemJSONRequestBody{}
+	ctx.Bind(&request)
+
+	unverifiedRequestDto := UnverifiedUpdateUseCaseRequestDto{request.Name}
+	VerifiedRequestDto, verfyErr := unverifiedRequestDto.Verify()
+	if verfyErr != nil {
+		return ctx.JSON(http.StatusBadRequest, verfyErr)
+	}
+
+	db, dbErr := database.New()
+	if dbErr != nil {
+		return ctx.JSON(http.StatusInternalServerError, dbErr)
+	}
+	defer db.Close()
+	repository := &StockItemRepository{db}
+
+	responseDto, err := UpdateStockItemUseCase(*VerifiedRequestDto, repository)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, err)
+	}
+
+	response := &stockitem_api.Created{
+		Id: responseDto.Id,
+	}
+
+	return ctx.JSON(http.StatusOK, response)
 }
