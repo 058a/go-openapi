@@ -1,6 +1,7 @@
 package api
 
 import (
+	openapi "openapi/internal/infra/oapi_codegen/stockitem"
 	"strings"
 	"testing"
 
@@ -13,14 +14,12 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-
-	"openapi/internal/infra/oapi_codegen/stockitem_api"
 )
 
 func TestPost(t *testing.T) {
 
 	// When
-	postRequestBody := &stockitem_api.PostStockItemJSONBody{
+	postRequestBody := &openapi.PostStockItemJSONBody{
 		Name: uuid.NewString(),
 	}
 	postRequestBodyJson, _ := json.Marshal(postRequestBody)
@@ -39,7 +38,7 @@ func TestPost(t *testing.T) {
 	}
 	defer postResponse.Body.Close()
 	resBodyByte, _ := io.ReadAll(postResponse.Body)
-	postResponseBody := &stockitem_api.Created{}
+	postResponseBody := &openapi.Created{}
 	json.Unmarshal(resBodyByte, &postResponseBody)
 
 	// Then
@@ -58,7 +57,7 @@ func TestPostValidation(t *testing.T) {
 	// Generate a string of 101 characters
 	longName := strings.Repeat("a", 101)
 
-	requestBody := &stockitem_api.PostStockItemJSONBody{
+	requestBody := &openapi.PostStockItemJSONBody{
 		Name: longName,
 	}
 	requestBodyJson, _ := json.Marshal(requestBody)
@@ -77,7 +76,7 @@ func TestPostValidation(t *testing.T) {
 	}
 	defer response.Body.Close()
 	resBodyByte, _ := io.ReadAll(response.Body)
-	actualResponse := &stockitem_api.Created{}
+	actualResponse := &openapi.Created{}
 	json.Unmarshal(resBodyByte, &actualResponse)
 
 	// Then
