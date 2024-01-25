@@ -1,7 +1,7 @@
 package hello
 
 import (
-	openapi "openapi/internal/infra/oapi_codegen/hello"
+	oapicodegen "openapi/internal/infra/oapi_codegen/hello"
 	"testing"
 
 	cmp "github.com/google/go-cmp/cmp"
@@ -26,10 +26,10 @@ func TestHello(t *testing.T) {
 	}
 
 	resBodyByte, _ := io.ReadAll(res.Body)
-	var actual = &openapi.Hello{}
+	var actual = &oapicodegen.Hello{}
 	json.Unmarshal(resBodyByte, &actual)
 
-	var expect = &openapi.Hello{
+	var expect = &oapicodegen.Hello{
 		Message: "Hello, World!",
 	}
 

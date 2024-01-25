@@ -6,14 +6,14 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"openapi/internal/infra/database"
-	openapi "openapi/internal/infra/oapi_codegen/stockitem"
+	oapicodegen "openapi/internal/infra/oapi_codegen/stockitem"
 
 	"openapi/internal/stockitem/usecase"
 )
 
 // PostStockItem is a function that handles the HTTP POST request for creating a new stock item.
 func Post(ctx echo.Context) error {
-	request := &openapi.PostStockItemJSONBody{}
+	request := &oapicodegen.PostStockItemJSONBody{}
 	ctx.Bind(&request)
 
 	UnverifiedRequestDto := usecase.UnverifiedCreateRequestDto{Name: request.Name}
@@ -33,7 +33,7 @@ func Post(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, err)
 	}
 
-	response := &openapi.Created{
+	response := &oapicodegen.Created{
 		Id: responseDto.Id,
 	}
 

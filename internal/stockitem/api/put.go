@@ -6,14 +6,14 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"openapi/internal/infra/database"
-	openapi "openapi/internal/infra/oapi_codegen/stockitem"
+	oapicodegen "openapi/internal/infra/oapi_codegen/stockitem"
 
 	"openapi/internal/stockitem/usecase"
 )
 
 // PutStockItem is a function that handles the HTTP PUT request for updating an existing stock item.
 func Put(ctx echo.Context) error {
-	request := &openapi.PutStockItemJSONRequestBody{}
+	request := &oapicodegen.PutStockItemJSONRequestBody{}
 	ctx.Bind(&request)
 
 	unverifiedRequestDto := usecase.UnverifiedUpdateRequestDto{Name: request.Name}
@@ -33,7 +33,7 @@ func Put(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, err)
 	}
 
-	response := &openapi.Created{
+	response := &oapicodegen.Created{
 		Id: responseDto.Id,
 	}
 

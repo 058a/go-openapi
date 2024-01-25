@@ -1,7 +1,7 @@
 package api
 
 import (
-	openapi "openapi/internal/infra/oapi_codegen/stockitem"
+	oapicodegen "openapi/internal/infra/oapi_codegen/stockitem"
 	"strings"
 	"testing"
 
@@ -19,7 +19,7 @@ import (
 func TestPut(t *testing.T) {
 
 	// When
-	postRequestBody := &openapi.PostStockItemJSONBody{
+	postRequestBody := &oapicodegen.PostStockItemJSONBody{
 		Name: uuid.NewString(),
 	}
 	postRequestBodyJson, _ := json.Marshal(postRequestBody)
@@ -38,7 +38,7 @@ func TestPut(t *testing.T) {
 	}
 	defer postResponse.Body.Close()
 	resBodyByte, _ := io.ReadAll(postResponse.Body)
-	postResponseBody := &openapi.Created{}
+	postResponseBody := &oapicodegen.Created{}
 	json.Unmarshal(resBodyByte, &postResponseBody)
 
 	// Then
@@ -57,7 +57,7 @@ func TestPutValidation(t *testing.T) {
 	// Generate a string of 101 characters
 	longName := strings.Repeat("a", 101)
 
-	requestBody := &openapi.PostStockItemJSONBody{
+	requestBody := &oapicodegen.PostStockItemJSONBody{
 		Name: longName,
 	}
 	requestBodyJson, _ := json.Marshal(requestBody)
@@ -76,7 +76,7 @@ func TestPutValidation(t *testing.T) {
 	}
 	defer response.Body.Close()
 	resBodyByte, _ := io.ReadAll(response.Body)
-	actualResponse := &openapi.Created{}
+	actualResponse := &oapicodegen.OK{}
 	json.Unmarshal(resBodyByte, &actualResponse)
 
 	// Then
