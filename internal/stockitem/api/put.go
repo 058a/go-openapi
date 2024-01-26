@@ -39,7 +39,7 @@ func Put(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, getErr)
 	}
 
-	responseDto, err := usecase.UpdateStockItemUseCase(*verifiedRequestDto, db)
+	responseDto, err := usecase.UpdateStockItemUseCase(verifiedRequestDto, db)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}

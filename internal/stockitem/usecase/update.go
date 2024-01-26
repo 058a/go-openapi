@@ -44,7 +44,7 @@ type UpdateResponseDto struct {
 
 // UpdateStockItemUseCase is a Go function that handles updating a stock item.
 func UpdateStockItemUseCase(
-	requestDto VerifiedUpdateRequestDto,
+	requestDto *VerifiedUpdateRequestDto,
 	db *sql.DB) (UpdateResponseDto, error) {
 
 	stockItem := requestDto.GenerateModel()

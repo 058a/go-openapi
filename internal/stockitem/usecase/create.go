@@ -15,13 +15,13 @@ type UnverifiedCreateRequestDto struct {
 	Name string
 }
 
-func (s UnverifiedCreateRequestDto) Verify() (VerifiedCreateRequestDto, error) {
+func (s UnverifiedCreateRequestDto) Verify() (*VerifiedCreateRequestDto, error) {
 	trimedName := strings.TrimSpace(s.Name)
 	if !(len(trimedName) > 0 && len(trimedName) <= 100) {
-		return VerifiedCreateRequestDto{}, fmt.Errorf("name length should be between 1 and 100")
+		return &VerifiedCreateRequestDto{}, fmt.Errorf("name length should be between 1 and 100")
 	}
 
-	return VerifiedCreateRequestDto{s.Name}, nil
+	return &VerifiedCreateRequestDto{s.Name}, nil
 }
 
 type VerifiedCreateRequestDto struct {
@@ -41,7 +41,7 @@ type CreateResponseDto struct {
 // It takes a requestDto of type PostStockItemUseCaseRequestDto and a repository of type *StockItemRepository as parameters.
 // It returns a PostStockItemUseCaseResponseDto and an error.
 func CreateStockItemUseCase(
-	requestDto VerifiedCreateRequestDto,
+	requestDto *VerifiedCreateRequestDto,
 	db *sql.DB) (CreateResponseDto, error) {
 
 	stockItem := requestDto.GenerateModel()

@@ -11,8 +11,15 @@ import (
 
 // TestCreateStockItemUseCase is a test function for the CreateStockItemUseCase.
 // It tests the functionality of the CreateStockItemUseCase with various scenarios.
-func TestCreateUseCase(t *testing.T) {
-	requestDto := VerifiedCreateRequestDto{uuid.NewString()}
+func TestCreate(t *testing.T) {
+
+	UnverifiedRequestDto := UnverifiedCreateRequestDto{
+		Name: uuid.NewString(),
+	}
+	verifiedRequestDto, verfyErr := UnverifiedRequestDto.Verify()
+	if verfyErr != nil {
+		t.Fatal(verfyErr)
+	}
 
 	db, dbErr := database.New()
 	if dbErr != nil {
@@ -20,7 +27,7 @@ func TestCreateUseCase(t *testing.T) {
 	}
 	defer db.Close()
 
-	responseDto, err := CreateStockItemUseCase(requestDto, db)
+	responseDto, err := CreateStockItemUseCase(verifiedRequestDto, db)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -34,7 +41,7 @@ func TestCreateUseCase(t *testing.T) {
 		t.Fatal(getErr)
 	}
 
-	if string(model.Name) != requestDto.Name {
-		t.Errorf("want %s, got %s", requestDto.Name, model.Name)
+	if string(model.Name) != verifiedRequestDto.Name {
+		t.Errorf("want %s, got %s", verifiedRequestDto.Name, model.Name)
 	}
 }

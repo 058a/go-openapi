@@ -11,9 +11,14 @@ import (
 
 func TestUpdateUseCase(t *testing.T) {
 
-	requestDto := VerifiedUpdateRequestDto{
-		Id:   uuid.New(),
-		Name: uuid.NewString()}
+	UnverifiedRequestDto := UnverifiedUpdateRequestDto{
+		Id:   uuid.NewString(),
+		Name: uuid.NewString(),
+	}
+	verifiedRequestDto, verfyErr := UnverifiedRequestDto.Verify()
+	if verfyErr != nil {
+		t.Fatal(verfyErr)
+	}
 
 	db, dbErr := database.New()
 	if dbErr != nil {
@@ -21,7 +26,7 @@ func TestUpdateUseCase(t *testing.T) {
 	}
 	defer db.Close()
 
-	responseDto, err := UpdateStockItemUseCase(requestDto, db)
+	responseDto, err := UpdateStockItemUseCase(verifiedRequestDto, db)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -35,7 +40,7 @@ func TestUpdateUseCase(t *testing.T) {
 		t.Fatal(getErr)
 	}
 
-	if string(model.Name) != requestDto.Name {
-		t.Errorf("want %s, got %s", requestDto.Name, model.Name)
+	if string(model.Name) != verifiedRequestDto.Name {
+		t.Errorf("want %s, got %s", verifiedRequestDto.Name, model.Name)
 	}
 }
