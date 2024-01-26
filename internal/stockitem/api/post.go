@@ -6,7 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"openapi/internal/infra/database"
-	oapicodegen "openapi/internal/infra/oapi_codegen/stockitem"
+	oapicodegen "openapi/internal/infra/oapicodegen/stockitem"
 
 	"openapi/internal/stockitem/usecase"
 )

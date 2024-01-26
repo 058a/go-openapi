@@ -1,7 +1,7 @@
 package hello
 
 import (
-	oapicodegen "openapi/internal/infra/oapi_codegen/hello"
+	oapicodegen "openapi/internal/infra/oapicodegen/hello"
 	"testing"
 
 	cmp "github.com/google/go-cmp/cmp"

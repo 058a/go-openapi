@@ -1,7 +1,7 @@
 package api
 
 import (
-	oapicodegen "openapi/internal/infra/oapi_codegen/stockitem"
+	oapicodegen "openapi/internal/infra/oapicodegen/stockitem"
 	"strings"
 	"testing"
 
